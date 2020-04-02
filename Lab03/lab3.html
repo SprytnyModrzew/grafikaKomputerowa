@@ -144,26 +144,26 @@ function multiplyMatrices(m1, m2) {
 }
 function Tick()
 {
-  angleZ=angleZ+10;
-  angleX=angleX+10;
-  angleY=angleY+10;
+  angleZ=angleZ+10;  //zmieniać szybkość rotacji tu
+  angleX=angleX+0;
+  angleY=angleY+20;
   let zMatrix = [
   1,0,0,0, //Macierz Rotacji
   0,Math.cos(angleZ*Math.PI/180.0),Math.sin(angleZ*Math.PI/180.0),0,
   0,-Math.sin(angleZ*Math.PI/180.0),Math.cos(angleZ*Math.PI/180.0),0,
-  0,0,-5,1 //Położenie kamery
+  0,0,0,0 //Położenie kamery
   ];
   let yMatrix = [
     Math.cos(angleY*Math.PI/180.0),0,Math.sin(angleY*Math.PI/180.0),0, //Macierz Rotacji
     0,1,0,0,
     -Math.sin(angleY*Math.PI/180.0),0,Math.cos(angleY*Math.PI/180.0),0.0,
-    0,0,-5,1 //Położenie kamery
+    0,0,0,0 //Położenie kamery
   ];
   let xMatrix = [
   Math.cos(angleX*Math.PI/180.0),-Math.sin(angleX*Math.PI/180.0),0,0, //Macierz Rotacji
   Math.sin(angleX*Math.PI/180.0),Math.cos(angleX*Math.PI/180.0),0,0,
   0,0,1,0.0,
-  0,0,-5,1
+  0,0,0,0
   ];
   let uMVMatrix =  multiplyMatrices(zMatrix,yMatrix);
   uMVMatrix = multiplyMatrices(uMVMatrix,xMatrix);
