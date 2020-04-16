@@ -210,7 +210,7 @@ var angleY = 0.0;
 var angleX = 0.0;
 var tx = 0.0;
 var ty = 0.0;
-var tz = -50.0;
+var tz = -10.0;
 function Tick()
 {
   let uMVMatrix = [
@@ -242,9 +242,9 @@ function Tick()
   ];
 
   let uMVTranslateZ = [
-  2,0,0,0,
-  0,0.2,0,0,
-  0,0,2,0,
+  1,0,0,0,
+  0,1,0,0,
+  0,0,1,0,
   tx,ty,tz,1
   ];
 
@@ -281,16 +281,19 @@ function Tick()
 }
 function handlekeydown(e)
 {
- if(e.keyCode==87) angleX=angleX+1.0; //W
+ if(e.keyCode==87) {angleX=angleX+1.0}; //W
  if(e.keyCode==83) angleX=angleX-1.0; //S
  if(e.keyCode==68) angleY=angleY+1.0;
  if(e.keyCode==65) angleY=angleY-1.0;
+
  if(e.keyCode==81) angleZ=angleZ+1.0;
  if(e.keyCode==69) angleZ=angleZ-1.0;
  if(e.keyCode==73) tz = tz + 0.1;
  if(e.keyCode==75) tz = tz - 0.1;
  if(e.keyCode==74) tx = tx + 0.1;
  if(e.keyCode==76) tx = tx - 0.1;
+ if(e.keyCode==85) ty = ty - 0.1;
+ if(e.keyCode==79) ty = ty + 0.1;
  //alert(e.keyCode);
  //alert(angleX);
 }
@@ -300,4 +303,3 @@ function handlekeydown(e)
 <canvas id="canvas3D" width="640" height="480" style="border: solid black 1px"></canvas>
 </body>
 </html>
-
