@@ -123,7 +123,7 @@ function startGL()
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPosition), gl.STATIC_DRAW);
   vertexPositionBuffer.itemSize = 3; //zdefiniowanie liczby współrzednych per wierzchołek
-  vertexPositionBuffer.numItems = 50; //Zdefinoiowanie liczby punktów w naszym buforze
+  vertexPositionBuffer.numItems = 36; //Zdefinoiowanie liczby punktów w naszym buforze
 
   //Opis sceny 3D, kolor każdego z wierzchołków
   let vertexColor = [
@@ -188,7 +188,7 @@ function startGL()
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexColor), gl.STATIC_DRAW);
   vertexColorBuffer.itemSize = 3;
-  vertexColorBuffer.numItems = 50;
+  vertexColorBuffer.numItems = 36;
 
 
   //Macierze opisujące położenie wirtualnej kamery w przestrzenie 3D
@@ -210,7 +210,7 @@ var angleY = 0.0;
 var angleX = 0.0;
 var tx = 0.0;
 var ty = 0.0;
-var tz = -10.0;
+var tz = -30.0;
 function Tick()
 {
   let uMVMatrix = [
@@ -241,17 +241,32 @@ function Tick()
   0,0,0,1
   ];
 
+    let uMVTranslateX = [
+  1,0,0,0,
+  0,1,0,0,
+  0,0,1,0,
+  tx,0,0,1
+  ];
+      let uMVTranslateY = [
+  1,0,0,0,
+  0,1,0,0,
+  0,0,1,0,
+  0,ty,0,1
+  ];
   let uMVTranslateZ = [
   1,0,0,0,
   0,1,0,0,
   0,0,1,0,
-  tx,ty,tz,1
+  0,0,tz,1
   ];
-
+  uMVMatrix = MatrixMul(uMVMatrix,uMVTranslateX);
+  uMVMatrix = MatrixMul(uMVMatrix,uMVTranslateY);
+  uMVMatrix = MatrixMul(uMVMatrix,uMVTranslateZ);
   uMVMatrix = MatrixMul(uMVMatrix,uMVRotX);
   uMVMatrix = MatrixMul(uMVMatrix,uMVRotY);
   uMVMatrix = MatrixMul(uMVMatrix,uMVRotZ);
-  uMVMatrix = MatrixMul(uMVMatrix,uMVTranslateZ);
+
+
   //alert(uPMatrix);
 
   //Render Scene
@@ -281,19 +296,83 @@ function Tick()
 }
 function handlekeydown(e)
 {
- if(e.keyCode==87) {angleX=angleX+1.0}; //W
+ if(e.keyCode==87) angleX=angleX+1.0; //W
  if(e.keyCode==83) angleX=angleX-1.0; //S
  if(e.keyCode==68) angleY=angleY+1.0;
  if(e.keyCode==65) angleY=angleY-1.0;
 
  if(e.keyCode==81) angleZ=angleZ+1.0;
  if(e.keyCode==69) angleZ=angleZ-1.0;
- if(e.keyCode==73) tz = tz + 0.1;
- if(e.keyCode==75) tz = tz - 0.1;
- if(e.keyCode==74) tx = tx + 0.1;
- if(e.keyCode==76) tx = tx - 0.1;
- if(e.keyCode==85) ty = ty - 0.1;
- if(e.keyCode==79) ty = ty + 0.1;
+
+ let uMVMatrix = [
+  1,0,0,0, //Macierz jednostkowa
+  0,1,0,0,
+  0,0,1,0,
+  0,0,0,1
+  ];
+
+  let uMVRotZ = [
+  +Math.cos(angleZ*Math.PI/180.0),+Math.sin(angleZ*Math.PI/180.0),0,0,
+  -Math.sin(angleZ*Math.PI/180.0),+Math.cos(angleZ*Math.PI/180.0),0,0,
+  0,0,1,0,
+  0,0,0,1
+  ];
+
+  let uMVRotY = [
+  +Math.cos(angleY*Math.PI/180.0),0,-Math.sin(angleY*Math.PI/180.0),0,
+  0,1,0,0,
+  +Math.sin(angleY*Math.PI/180.0),0,+Math.cos(angleY*Math.PI/180.0),0,
+  0,0,0,1
+  ];
+
+  let uMVRotX = [
+  1,0,0,0,
+  0,+Math.cos(angleX*Math.PI/180.0),+Math.sin(angleX*Math.PI/180.0),0,
+  0,-Math.sin(angleX*Math.PI/180.0),+Math.cos(angleX*Math.PI/180.0),0,
+  0,0,0,1
+  ];
+ uMVMatrix = MatrixMul(uMVMatrix,uMVRotX);
+ uMVMatrix = MatrixMul(uMVMatrix,uMVRotY);
+ uMVMatrix = MatrixMul(uMVMatrix,uMVRotZ);
+
+ if(e.keyCode==73) {
+   let dz = 0.1;
+   tx = tx + uMVMatrix[2]*dz;
+   ty = ty + uMVMatrix[6]*dz;
+   tz = tz + uMVMatrix[10]*dz;
+
+ };
+ if(e.keyCode==75) {
+   let dz = -0.1;
+   tx = tx + uMVMatrix[2]*dz;
+   ty = ty + uMVMatrix[6]*dz;
+   tz = tz + uMVMatrix[10]*dz;
+
+ };
+ if(e.keyCode==74) {
+   let dx = 0.1;
+   tx = tx + uMVMatrix[0]*dx;
+   ty = ty + uMVMatrix[4]*dx;
+   tz = tz + uMVMatrix[8]*dx;
+ };
+ if(e.keyCode==76) {
+   let dx = -0.1;
+   tx = tx + uMVMatrix[0]*dx;
+   ty = ty + uMVMatrix[4]*dx;
+   tz = tz + uMVMatrix[8]*dx;
+ };
+ if(e.keyCode==85) {
+   let dy = -0.1;
+   tx = tx + uMVMatrix[1]*dy;
+   ty = ty + uMVMatrix[5]*dy;
+   tz = tz + uMVMatrix[9]*dy;
+ };
+ if(e.keyCode==79) {
+   let dy = 0.1;
+   tx = tx + uMVMatrix[1]*dy;
+   ty = ty + uMVMatrix[5]*dy;
+   tz = tz + uMVMatrix[9]*dy;
+ };
  //alert(e.keyCode);
  //alert(angleX);
 }
